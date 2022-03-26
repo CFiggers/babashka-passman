@@ -46,8 +46,9 @@
 
 (defn confirm-overwrite []
   (print "Do you want to overwrite? [y/n] ") (flush)
-  (let [input (String. (.readLine (System/console)))]
-    (case input "y" true "Y" true false)))
+  (let [input (str/lower-case (String. (.readLine (System/console))))]
+    (case input "y" true false)))
+
 
 (defn add-pass [url username password overwrite]
   (stash/stash-init (password-input))
