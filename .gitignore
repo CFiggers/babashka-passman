@@ -3,3 +3,5 @@
 .lsp/
 .portal/
 .cpcache/
+passman.db
+passman.stash
