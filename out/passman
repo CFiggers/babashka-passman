@@ -219,30 +219,45 @@
   [nid v]
   (stash/update nid v))
 
+(defn stash-delete
+  "Deletes a node given a node id"
+  [nid]
+  (stash/delete nid))
+
 (defn stash-nodes
   "Gets all nodes stored in stash.
   If a parent-node-id is provided, only nodes with that parent-id are returned."
   ([] (stash-nodes 0))
   ([parent-id] (stash/nodes parent-id)))
 
-(defn update-password!
-  "Updates a node using url and username"
-  [url username password]
+(defn find-password-node [url username]
   (let [nodes (stash-nodes)
         key (str url username)
         found-node (first (filter (fn [n]
                                     (= (:key n) key)) nodes))]
-    (stash-update (:id found-node) password)))
+    found-node))
+
+(defn find-password [url username]
+  (let [found-node (find-password-node url username)
+        password (:value found-node)]
+    password))
 
 (defn insert-password! [url username password]
   (stash-add 0 (str url username) password))
 
-(defn find-password [url username]
-  (let [nodes (stash-nodes)
-        key (str url username)
-        found-node (first (filter (fn [n]
-                                    (= (:key n) key)) nodes))]
-    (:value found-node)))
+(defn update-password!
+  "Updates a node using url and username"
+  [url username password]
+  (let [found-node (find-password-node url username)
+        nid (:id found-node)]
+    (stash-update nid password)))
+
+(defn delete-password!
+  "Deletes a node using url and username"
+  [url username]
+  (let [found-node (find-password-node url username)
+        nid (:id found-node)]
+    (stash-delete nid)))
 
 (comment
 
@@ -2934,6 +2949,13 @@
                        (h/values [[url username]])
                        (sql/format))))
 
+(defn delete-password! [url username]
+  (sqlite/execute! dbname
+                   (-> (h/delete-from :passwords)
+                       (h/where [:= :url url]
+                                [:= :username username])
+                       (sql/format))))
+
 (defn list-passwords []
   (sqlite/query dbname
                 (-> (h/select :url :username)
@@ -2952,6 +2974,11 @@
       (h/values [["facebook.com" "caleb@test.com"]])
       (sql/format))
 
+  (-> (h/delete-from :passwords)
+      (h/where [:= :url "facebook.com"]
+               [:= :username "caleb@test.com"])
+      (sql/format))
+
   (sqlite/query dbname
                 (-> (h/select :url :username)
                     (h/from :passwords)
@@ -2961,6 +2988,7 @@
             [passman.password :refer [generate-password]]
             [passman.stash :as stash]
             [passman.clipboard :refer [copy]]
+            [clojure.string :as str]
             [table.core :as t]))
 
 
@@ -2973,6 +3001,7 @@
    [nil "--list"]
    ["-h" "--help" "Show help"]
    ["-u" "--usage" "Show usage"]
+   ["-d" "--delete"]
    ["-p" "--password Password" "Manual password to add with given <url> and <username>."]
    ["-a" "--add" "Adds a manually provided password to the database."]
    ["-f" "--force-update" "Forces Add and Generate to overwrite existing."]])
@@ -2992,6 +3021,7 @@
        "  [-p <pass> | --password <pass>]       Provides a manual password to be stored with the given <url> and <username>." "\n"
        "                                          Ignored if not used with [-a | -add] or [-a! | -add!]." "\n"
        "  [-a | --add]                          Saves <pass> as a new password. Panics if <url> <username> combo already exists." "\n"
+       "  [-d | --delete]                       Deletes the provided <url> and <username> combo. Must be passed with [-f | --force-update]." "\n"
        "  [-f | --force-update]                 Forces [-a | --add] and [-g | --generate] to overwrite existing <url> and <username> combo." "\n"
        "  [--list]                              Print table of all urls and usernames with stored passwords." "\n"
        "                                          Runs only if <url> and <username> are not supplied."))
@@ -3002,8 +3032,23 @@
 
 (defn confirm-overwrite []
   (print "Do you want to overwrite? [y/n] ") (flush)
-  (let [input (String. (.readLine (System/console)))]
-    (case input "y" true "Y" true false)))
+  (let [input (str/lower-case (String. (.readLine (System/console))))]
+    (case input "y" true false)))
+
+(defn confirm-delete []
+  (print "Are you sure you want to delete? (This cannot be undone) [yes/no] ") (flush)
+  (let [input (str/lower-case (String. (.readLine (System/console))))]
+    (case input "yes" true false)))
+
+(defn delete-pass [url username]
+  (stash/stash-init (password-input))
+  (println (str "!!! DELETING: URL " url " and Username " username " !!!"))
+  (let [confirm (confirm-delete)]
+    (if confirm
+      (do (db/delete-password! url username)
+          (stash/delete-password! url username)
+          (println "Deleted password"))
+      (println "Canceled"))))
 
 (defn add-pass [url username password overwrite]
   (stash/stash-init (password-input))
@@ -3033,6 +3078,11 @@
     ;; (println options) ;; Uncomment to debug options
     (cond
       (or (:help options) (:usage options)) (println usage)
+      (:delete options) (if (:force-update options)
+                          (if (and url username)
+                            (delete-pass url username)
+                            (println "You must specify a url/username combo to delete."))
+                          (println "You must pass [-f | --force-update] to delete a url/username combo."))
       (:generate options) (generate-new-pass url username (:length options) (:force-update options))
       (:add options) (if (:password options)
                        (add-pass url username (:password options) (:force-update options))
@@ -3044,7 +3094,8 @@
                                (do (copy password)
                                    (println "Password copied to clipboard"))
                                (println "Password not found for that url/username combo."))))
-      (:list options) (t/table (db/list-passwords)))))
+      (:list options) (t/table (db/list-passwords))
+      :else (println usage))))
 
 (comment
   (-main))
