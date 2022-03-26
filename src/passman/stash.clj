@@ -25,6 +25,11 @@
   [nid v]
   (stash/update nid v))
 
+(defn stash-delete
+  "Deletes a node given a node id"
+  [nid]
+  (stash/delete nid))
+
 (defn stash-nodes
   "Gets all nodes stored in stash.
   If a parent-node-id is provided, only nodes with that parent-id are returned."
@@ -46,12 +51,19 @@
 (defn insert-password! [url username password]
   (stash-add 0 (str url username) password))
 
-(defn find-password [url username]
-  (let [nodes (stash-nodes)
-        key (str url username)
-        found-node (first (filter (fn [n]
-                                    (= (:key n) key)) nodes))]
-    (:value found-node)))
+(defn update-password!
+  "Updates a node using url and username"
+  [url username password]
+  (let [found-node (find-password-node url username)
+        nid (:id found-node)]
+    (stash-update nid password)))
+
+(defn delete-password!
+  "Deletes a node using url and username"
+  [url username]
+  (let [found-node (find-password-node url username)
+        nid (:id found-node)]
+    (stash-delete nid)))
 
 (comment
 
