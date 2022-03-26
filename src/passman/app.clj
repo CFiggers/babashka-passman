@@ -7,7 +7,6 @@
             [clojure.string :as str]
             [table.core :as t]))
 
-;; TODO(#1): Add [-d | --delete] option
 
 (def cli-options
   [["-l" "--length Length" "Password length"
