@@ -6,6 +6,8 @@
             [passman.clipboard :refer [copy]]
             [table.core :as t]))
 
+;; TODO: Add [-d | --delete] option
+
 (def cli-options
   [["-l" "--length Length" "Password length"
     :default 40
