@@ -22,7 +22,7 @@
    ["-f" "--force-update" "Forces Add and Generate to overwrite existing."]])
 
 (def usage
-  (str "Passman CLI Password Manager v. 0.0.1" "\n"
+  (str "Passman CLI Password Manager v. 0.0.2" "\n"
        "\n"
        "Usage: passman <url> <username>" "\n"
        "\n"
@@ -84,8 +84,10 @@
       (and url username) (do
                            (stash/stash-init (password-input))
                            (let [password (stash/find-password url username)]
-                             (copy password)
-                             (println "Password copied to clipboard")))
+                             (if password
+                               (do (copy password)
+                                   (println "Password copied to clipboard"))
+                               (println "Password not found for that url/username combo."))))
       (:list options) (t/table (db/list-passwords)))))
 
 (comment
