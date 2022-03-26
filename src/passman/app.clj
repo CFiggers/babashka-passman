@@ -23,24 +23,25 @@
    ["-f" "--force-update" "Forces Add and Generate to overwrite existing."]])
 
 (def usage
-  (str "Passman CLI Password Manager v. 0.0.2-a" "\n"
-       "\n"
-       "Usage: passman <url> <username>" "\n"
-       "\n"
-       "Default behavior: Looks up password for the given <url> and <username>, copies to clipboard." "\n"
-       "\n"
-       "Available options:" "\n"
-       "  [-h | --help] | [-u | --usage]        Show this help text. Ignores <url> and <username>." "\n"
-       "  [-g | --generate]                     Generate a new password for given <url> and <username." "\n"
-       "                                          Copies generated password to clipboard and saves to database." "\n"
-       "  [-l <length> | --length <length>]     Specify length of password generated with [-g | --generate]. Defaults to 40." "\n"
-       "  [-p <pass> | --password <pass>]       Provides a manual password to be stored with the given <url> and <username>." "\n"
-       "                                          Ignored if not used with [-a | -add] or [-a! | -add!]." "\n"
-       "  [-a | --add]                          Saves <pass> as a new password. Panics if <url> <username> combo already exists." "\n"
-       "  [-d | --delete]                       Deletes the provided <url> and <username> combo. Must be passed with [-f | --force-update]." "\n"
-       "  [-f | --force-update]                 Forces [-a | --add] and [-g | --generate] to overwrite existing <url> and <username> combo." "\n"
-       "  [--list]                              Print table of all urls and usernames with stored passwords." "\n"
-       "                                          Runs only if <url> and <username> are not supplied."))
+  (->> ["Passman CLI Password Manager v. 0.0.2-a"
+        ""
+        "Usage: passman <url> <username>"
+        ""
+        "Default behavior: Looks up password for the given <url> and <username>, copies to clipboard."
+        ""
+        "Available options:"
+        "  [-h | --help] | [-u | --usage]        Show this help text. Ignores <url> and <username>."
+        "  [-g | --generate]                     Generate a new password for given <url> and <username."
+        "                                          Copies generated password to clipboard and saves to database."
+        "  [-l <length> | --length <length>]     Specify length of password generated with [-g | --generate]. Defaults to 40."
+        "  [-p <pass> | --password <pass>]       Provides a manual password to be stored with the given <url> and <username>."
+        "                                          Ignored if not used with [-a | -add] or [-a! | -add!]."
+        "  [-a | --add]                          Saves <pass> as a new password. Panics if <url> <username> combo already exists."
+        "  [-d | --delete]                       Deletes the provided <url> and <username> combo. Must be passed with [-f | --force-update]."
+        "  [-f | --force-update]                 Forces [-a | --add] and [-g | --generate] to overwrite existing <url> and <username> combo."
+        "  [--list]                              Print table of all urls and usernames with stored passwords."
+        "                                          Runs only if <url> and <username> are not supplied."]
+       (str/join \newline)))
 
 (defn password-input []
   (println "Enter your master key:")
