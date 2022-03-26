@@ -20,15 +20,28 @@
   [parent-id k v]
   (stash/add parent-id k v))
 
-(defn insert-password! [url username password]
-  (stash-add 0 (str url username) password))
+(defn stash-update
+  "Updates a node given a node id"
+  [nid v]
+  (stash/update nid v))
 
 (defn stash-nodes
   "Gets all nodes stored in stash.
   If a parent-node-id is provided, only nodes with that parent-id are returned."
   ([] (stash-nodes 0))
-
   ([parent-id] (stash/nodes parent-id)))
+
+(defn update-password!
+  "Updates a node using url and username"
+  [url username password]
+  (let [nodes (stash-nodes)
+        key (str url username)
+        found-node (first (filter (fn [n]
+                                    (= (:key n) key)) nodes))]
+    (stash-update (:id found-node) password)))
+
+(defn insert-password! [url username password]
+  (stash-add 0 (str url username) password))
 
 (defn find-password [url username]
   (let [nodes (stash-nodes)
