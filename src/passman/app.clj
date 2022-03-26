@@ -88,7 +88,8 @@
                                (do (copy password)
                                    (println "Password copied to clipboard"))
                                (println "Password not found for that url/username combo."))))
-      (:list options) (t/table (db/list-passwords)))))
+      (:list options) (t/table (db/list-passwords))
+      :else (println usage))))
 
 (comment
   (-main))
