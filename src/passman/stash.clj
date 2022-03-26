@@ -31,14 +31,17 @@
   ([] (stash-nodes 0))
   ([parent-id] (stash/nodes parent-id)))
 
-(defn update-password!
-  "Updates a node using url and username"
-  [url username password]
+(defn find-password-node [url username]
   (let [nodes (stash-nodes)
         key (str url username)
         found-node (first (filter (fn [n]
                                     (= (:key n) key)) nodes))]
-    (stash-update (:id found-node) password)))
+    found-node))
+
+(defn find-password [url username]
+  (let [found-node (find-password-node url username)
+        password (:value found-node)]
+    password))
 
 (defn insert-password! [url username password]
   (stash-add 0 (str url username) password))
