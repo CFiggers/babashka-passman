@@ -3,8 +3,15 @@ Notable changes to this project will be documented in this file.
 
 ## Upcoming
 ### Added
-- Delete ([-d | --delete]) flag for removing a provided url/username combo
 - Functionality to update master password
+
+## 0.0.2-a - 2022-03-26
+### Added 
+- Delete ([-d | --delete]) flag for removing a provided url/username combo
+
+### Changed 
+- Refactored some functions in `stash.clj`
+- Added functions for delete functionality in `db.clj`
 
 ## 0.0.2 - 2022-03-26
 ### Added

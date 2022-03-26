@@ -23,7 +23,7 @@
    ["-f" "--force-update" "Forces Add and Generate to overwrite existing."]])
 
 (def usage
-  (str "Passman CLI Password Manager v. 0.0.2" "\n"
+  (str "Passman CLI Password Manager v. 0.0.2-a" "\n"
        "\n"
        "Usage: passman <url> <username>" "\n"
        "\n"
