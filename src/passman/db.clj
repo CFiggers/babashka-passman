@@ -26,6 +26,13 @@
                        (h/values [[url username]])
                        (sql/format))))
 
+(defn delete-password! [url username]
+  (sqlite/execute! dbname
+                   (-> (h/delete-from :passwords)
+                       (h/where [:= :url url]
+                                [:= :username username])
+                       (sql/format))))
+
 (defn list-passwords []
   (sqlite/query dbname
                 (-> (h/select :url :username)
@@ -42,6 +49,11 @@
   (-> (h/insert-into :passwords)
       (h/columns :url :username)
       (h/values [["facebook.com" "caleb@test.com"]])
+      (sql/format))
+
+  (-> (h/delete-from :passwords)
+      (h/where [:= :url "facebook.com"]
+               [:= :username "caleb@test.com"])
       (sql/format))
 
   (sqlite/query dbname
