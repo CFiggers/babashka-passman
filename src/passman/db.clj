@@ -8,7 +8,7 @@
 
 (require '[pod.babashka.go-sqlite3 :as sqlite])
 
-(def dbname "passman.db")
+(def dbname (str (System/getenv "HOME") "/passman/passman.db"))
 
 (defn create-db! []
   (when (not (fs/exists? dbname))

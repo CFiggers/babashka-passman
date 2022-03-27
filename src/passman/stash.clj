@@ -1,7 +1,8 @@
 (ns passman.stash
   (:require [babashka.pods :as pods]))
 
-(def ^{:doc "path to stash file"} stash-file-path "passman.stash")
+(def ^{:doc "path to stash file"} stash-file-path
+  (str (System/getenv "HOME") "/passman/passman.stash"))
 
 (pods/load-pod 'rorokimdim/stash "0.3.1")
 
