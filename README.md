@@ -8,6 +8,8 @@ I may update it myself with some additional features/safety (maybe tinkering wit
 
 # Usage
 
+The following assumes you are using Linux or some other Unix-like environment. Code blocks beginning with/containing a `$` are terminal commands.
+
 1. Install [Babashka](https://github.com/babashka/babashka), [sqlite3](https://www.sqlite.org/index.html), and [stash](https://github.com/rorokimdim/stash).
 
 2. Clone this repo using either `git` or the GitHub CLI:
