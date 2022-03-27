@@ -7,7 +7,6 @@
             [clojure.string :as str]
             [table.core :as t]))
 
-
 (def cli-options
   [["-l" "--length Length" "Password length"
     :default 40
