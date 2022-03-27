@@ -5,6 +5,10 @@ Notable changes to this project will be documented in this file.
 ### Added
 - Functionality to update master password
 
+## 0.0.2-b - 2022-03-26
+### Changed
+- Made paths non-relative (script usable from anywhere if `out` is on your $PATH)
+
 ## 0.0.2-a - 2022-03-26
 ### Added 
 - Delete ([-d | --delete]) flag for removing a provided url/username combo
